@@ -50,21 +50,23 @@ const fetchCoordsByIP = function(ip, callback) {
   });
 };
 
+
 const fetchISSFlyOverTimes = function(coords, callback) {
-  request(`http://api.open-notify.org/iss-pass.json?lat=LAT&lon=LON`, (error, response, body) => {
+  const url = `http://api.open-notify.org/iss-pass.json?lat=${coords.latitude}&lon=${coords.longitude}`;
+
+  request(url, (error, response, body) => {
     if (error) {
       callback(error, null);
       return;
     }
 
     if (response.statusCode !== 200) {
-      callback(Error(`Status Code ${response.statusCode} when fetching Fly Over Times: ${body}`), null);
+      callback(Error(`Status Code ${response.statusCode} when fetching ISS pass times: ${body}`), null);
       return;
     }
 
-    const { latitude, longitude } = JSON.parse(body);
-
-    callback(null, { risetime, longitude });
+    const passes = JSON.parse(body).response;
+    callback(null, passes );
 
   });
 };
